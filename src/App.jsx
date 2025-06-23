@@ -1,15 +1,26 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './App.scss';
 
 export const App = () => {
   const [count, setCount] = useState(0);
+  const updateQueue = useRef(0);
+
+  const flushUpdateQueue = () => {
+    setCount(prev => {
+      const result = prev + updateQueue.current;
+      updateQueue.current = 0;
+      return result;
+    });
+  }
 
   const addOne = () => {
-    setCount(prev => prev + 1);
+    updateQueue.current += 1;
+    flushUpdateQueue();
   };
 
   const add100 = () => {
-    setCount(prev => prev + 100);
+    updateQueue.current += 100;
+    flushUpdateQueue();
   };
 
   // DON'T change the code below
